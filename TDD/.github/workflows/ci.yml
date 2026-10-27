@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main, btl, dev-btl, btdd, dev-btdd]
+  pull_request:
+    branches: [main, btl, dev-btl, btdd, dev-btdd]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby-version: ["3.3", "3.4", "jruby"]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby-version }}
+
+    - name: Instalar dependencias
+      run: gem install rake rspec simplecov
+
+    - name: Ejecutar pruebas de TL (si existe)
+      run: |
+        if [ -d "TL" ]; then
+          echo "Ejecutando pruebas de TL..."
+          cd TL && rake
+        else
+          echo "La carpeta TL no está en esta rama. Omitiendo."
+        fi
+
+    - name: Ejecutar pruebas de TDD (si existe)
+      run: |
+        if [ -d "TDD" ]; then
+          echo "Ejecutando pruebas de TDD..."
+          cd TDD && rake
+        else
+          echo "La carpeta TDD no está en esta rama. Omitiendo."
+        fi
