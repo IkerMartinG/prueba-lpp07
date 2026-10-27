@@ -1,0 +1,9 @@
+task default: :spec
+desc "Expectativas para las pruebas"
+task :spec do
+  sh "rspec -I. spec/matrix_spec.rb"
+end
+desc "Ejecutar en modo verborreico con documentacion"
+task :doc do
+  sh "rspec -I. spec/matrix_spec.rb --format documentation"
+end
